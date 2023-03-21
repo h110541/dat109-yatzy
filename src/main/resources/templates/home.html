@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Yatzy</title>
+</head>
+
+<body>
+
+<h1><a th:href="@{'/'}">Yatzy</a></h1>
+
+<h2>Spill</h2>
+<ul>
+  <li th:each="sp : ${spill}">
+    <a th:text="|spill-ID: ${sp.id}|" th:href="@{'/spill/' + ${sp.id}}"></a>
+  </li>
+</ul>
+
+<form method="post" action="nyttspill">
+  <button>Opprett nytt spill</button>
+</form>
+
+<hr />
+
+<h2>Brukere</h2>
+<ul>
+  <li th:each="bruker : ${brukere}" th:text="${bruker.brukernavn}"></li>
+</ul>
+
+<form method="post" action="nybruker">
+  <label>Legg til bruker</label>
+  <input type="text" name="brukernavn" />
+  <button>Legg til</button>
+</form>
+
+<hr />
+
+</body>
+</html>
