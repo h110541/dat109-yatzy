@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Spill</title>
+</head>
+
+<body>
+<h1><a th:href="@{'/'}">Yatzy</a></h1>
+<h2 th:text="|Spill #${spill.id}|"></h2>
+
+<div th:if="${!spill.startet}">
+  <p style="color: orangered">Spillet har ikke startet</p>
+  <form th:if="${!deltakere.isEmpty()}" th:action="@{'/spill/' + ${spill.id} + '/start'}">
+    <button>Start spill</button>
+  </form>
+  <hr />
+
+  <h2>Påmeldte deltakere</h2>
+  <ul>
+    <li th:each="deltaker : ${deltakere}" th:text="${deltaker.brukernavn}"></li>
+  </ul>
+  <hr />
+
+  <h2>Andre brukere</h2>
+  <ul>
+    <li th:each="bruker : ${andreBrukere}">
+      <a th:text="${bruker.brukernavn}" th:href="@{'/spill/' + ${spill.id} + '/leggtildeltaker/' + ${bruker.id}}"></a>
+    </li>
+  </ul>
+  <hr />
+</div>
+
+<div th:if="${spill.startet}">
+  <p style="color: darkgreen">Spillet pågår</p>
+  <hr />
+
+  <h2>Spill spillet, velg bruker:</h2>
+  <ul>
+    <li th:each="deltaker : ${deltakere}">
+      <a th:text="${deltaker.brukernavn}" th:href="@{'/spill/' + ${spill.id} + '/spillsomdeltaker/' + ${deltaker.id}}"></a>
+    </li>
+  </ul>
+  <hr />
+</div>
+
+</body>
+</html>
