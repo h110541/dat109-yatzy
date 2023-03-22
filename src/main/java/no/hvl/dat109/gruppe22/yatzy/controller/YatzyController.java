@@ -3,8 +3,10 @@ package no.hvl.dat109.gruppe22.yatzy.controller;
 import no.hvl.dat109.gruppe22.yatzy.model.Bruker;
 import no.hvl.dat109.gruppe22.yatzy.model.Spill;
 import no.hvl.dat109.gruppe22.yatzy.repository.BrukerRepository;
+import no.hvl.dat109.gruppe22.yatzy.repository.RunderesultatRepository;
 import no.hvl.dat109.gruppe22.yatzy.repository.SpillRepository;
 import no.hvl.dat109.gruppe22.yatzy.service.BrukerService;
+import no.hvl.dat109.gruppe22.yatzy.service.RunderesultatService;
 import no.hvl.dat109.gruppe22.yatzy.service.SpillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,12 @@ public class YatzyController {
 
     @Autowired
     private SpillService spillService;
+
+    @Autowired
+    private RunderesultatRepository runderesultatRepo;
+
+    @Autowired
+    private RunderesultatService runderesultatService;
 
     @GetMapping("/")
     public String home(Model model) {
