@@ -49,16 +49,19 @@ public class YatzyController {
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("brukere", brukerRepo.findAll());
-        model.addAttribute("spill", spillRepo.findAll());
+        model.addAttribute("brukere", brukerRepo.alleSortertPaId());
+        model.addAttribute("spill", spillRepo.alleSortertPaId());
         return "home";
     }
 
     @PostMapping("/nybruker")
     public String nyBruker(@RequestParam String brukernavn) {
-        Bruker bruker = new Bruker();
-        bruker.setBrukernavn(brukernavn);
-        brukerRepo.save(bruker);
+        if (!brukernavn.isBlank()) {
+            Bruker bruker = new Bruker();
+            bruker.setBrukernavn(brukernavn.strip());
+            brukerRepo.save(bruker);
+        }
+
         return "redirect:/";
     }
 
