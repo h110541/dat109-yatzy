@@ -56,7 +56,7 @@
     <!--<button type="submit" th:if="${kastnr} ne 3">Trill terninger</button>-->
 
     <fieldset th:if="${terninger}">
-      <legend>Behold terninger</legend>
+      <legend>Terninger<span th:if="${kastnr} == 1 or ${kastnr} == 2"> (klikk på terningene du vil beholde)</span></legend>
       <input type="checkbox" id="cb1" name="behold" value="t1" th:disabled="not (${kastnr} == 1 or ${kastnr} == 2)" th:checked="${checked} and ${#sets.contains(checked, 't1')}"/>
       <label for="cb1" th:text="${terninger.t1}" th:class="(${sidenr} == 1)? 'ingenverdi'">Terning 1</label>
       <input type="checkbox" id="cb2" name="behold" value="t2" th:disabled="not (${kastnr} == 1 or ${kastnr} == 2)" th:checked="${checked} and ${#sets.contains(checked, 't2')}"/>

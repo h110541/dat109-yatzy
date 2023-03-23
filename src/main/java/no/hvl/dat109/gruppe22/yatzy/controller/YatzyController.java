@@ -12,6 +12,7 @@ import no.hvl.dat109.gruppe22.yatzy.service.SpillService;
 import no.hvl.dat109.gruppe22.yatzy.spill.Kombinasjonstyper;
 import no.hvl.dat109.gruppe22.yatzy.spill.Poengberegning;
 import no.hvl.dat109.gruppe22.yatzy.spill.TerningUtil;
+import no.hvl.dat109.gruppe22.yatzy.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,24 +117,9 @@ public class YatzyController {
         Spill spill = spillRepo.findById(spillId).orElse(null);
         Bruker bruker = brukerRepo.findById(brukerId).orElse(null);
 
-        if (spill == null) {
-            ra.addFlashAttribute("feilmelding", String.format("Fant ikke spill med ID %d", spillId));
-            return "redirect:/feil";
-        }
-
-        if (bruker == null) {
-            ra.addFlashAttribute("feilmelding", String.format("Fant ikke bruker med ID %d", brukerId));
-            return "redirect:/feil";
-        }
-
-        if (!spill.getDeltakere().contains(bruker)) {
-            String fm = String.format("Bruker med ID %d er ikke påmeldt spill med ID %d", brukerId, spillId);
-            ra.addFlashAttribute("feilmelding", fm);
-            return "redirect:/feil";
-        }
-
-        if (!spill.getStartet()) {
-            ra.addFlashAttribute("feilmelding", String.format("Spill med id %d har ikke startet ennå", spillId));
+        String feilmelding = Util.sjekkGyldigSpillOgBruker(spill, spillId, bruker, brukerId);
+        if (feilmelding != null) {
+            ra.addFlashAttribute("feilmelding", feilmelding);
             return "redirect:/feil";
         }
 
@@ -191,24 +177,9 @@ public class YatzyController {
         Spill spill = spillRepo.findById(spillId).orElse(null);
         Bruker bruker = brukerRepo.findById(brukerId).orElse(null);
 
-        if (spill == null) {
-            ra.addFlashAttribute("feilmelding", String.format("Fant ikke spill med ID %d", spillId));
-            return "redirect:/feil";
-        }
-
-        if (bruker == null) {
-            ra.addFlashAttribute("feilmelding", String.format("Fant ikke bruker med ID %d", brukerId));
-            return "redirect:/feil";
-        }
-
-        if (!spill.getDeltakere().contains(bruker)) {
-            String fm = String.format("Bruker med ID %d er ikke påmeldt spill med ID %d", brukerId, spillId);
-            ra.addFlashAttribute("feilmelding", fm);
-            return "redirect:/feil";
-        }
-
-        if (!spill.getStartet()) {
-            ra.addFlashAttribute("feilmelding", String.format("Spill med id %d har ikke startet ennå", spillId));
+        String feilmelding = Util.sjekkGyldigSpillOgBruker(spill, spillId, bruker, brukerId);
+        if (feilmelding != null) {
+            ra.addFlashAttribute("feilmelding", feilmelding);
             return "redirect:/feil";
         }
 
@@ -254,5 +225,10 @@ public class YatzyController {
         }
 
         return "redirect:/spill/{spillId}/spillsomdeltaker/{brukerId}";
+    }
+
+    @GetMapping("/feil")
+    public String feil() {
+        return "feil";
     }
 }
