@@ -131,41 +131,34 @@ public class YatzyController {
 
         if (aktivKombinasjon == null && bekreftresultatid != null) {
             Runderesultat rr = runderesultatRepo.findById(bekreftresultatid).orElse(null);
-            Map<String, Integer> terninger = rr.hentTerningverdier();
-            Map<String, String> terningSymboler = TerningUtil.terningVerdierTilSymboler(terninger);
 
             int resultat = Poengberegning.beregnRunde(rr);
             kombinasjonstype = rr.getKombinasjonstype();
 
             model.addAttribute("kastnr", 3);
-            model.addAttribute("sidenr", 4);
             model.addAttribute("resultat", resultat);
-            model.addAttribute("terninger", terningSymboler);
+            model.addAttribute("terninger", TerningUtil.terningVerdierTilSymboler(rr.hentTerningverdier()));
+            model.addAttribute("side", "kast3");
         } else if (resultater.size() == Kombinasjonstyper.ANTALL_KOMBINASJONSTYPER) {
-            model.addAttribute("spillerFerdig", true);
+            model.addAttribute("side", "ferdig");
         } else if (aktivKombinasjon == null) {
-            model.addAttribute("sidenr", 1);
-            Map<String, String> terningSymboler = TerningUtil.terningVerdierTilSymboler(TerningUtil.KUN_ENERE);
-            model.addAttribute("terninger", terningSymboler);
+            model.addAttribute("terninger", TerningUtil.terningVerdierTilSymboler(TerningUtil.KUN_ENERE));
+            model.addAttribute("side", "nyttkast");
         } else {
             int kastnr = aktivKombinasjon.getKastnr();
-            int sidenr = kastnr + 1;
-            Map<String, Integer> terninger = aktivKombinasjon.hentTerningverdier();
-            Map<String, String> terningSymboler = TerningUtil.terningVerdierTilSymboler(terninger);
-
             model.addAttribute("kastnr", kastnr);
-            model.addAttribute("sidenr", sidenr);
-            model.addAttribute("terninger", terningSymboler);
+            model.addAttribute("terninger", TerningUtil.terningVerdierTilSymboler(aktivKombinasjon.hentTerningverdier()));
+            model.addAttribute("side", "kast" + kastnr); // kast 1 eller 2
         }
 
         model.addAttribute("kombinasjonstype", Kombinasjonstyper.NAVN_UI.get(kombinasjonstype));
+        model.addAttribute("poeng", Poengberegning.genererPoengMap(resultater, Kombinasjonstyper.NAVN));
         model.addAttribute("spillId", spillId);
         model.addAttribute("brukerId", brukerId);
+
         if (checked != null) {
             model.addAttribute("checked", checked);
         }
-
-        model.addAttribute("poeng", Poengberegning.genererPoengMap(resultater, Kombinasjonstyper.NAVN));
 
         return "yatzy";
     }

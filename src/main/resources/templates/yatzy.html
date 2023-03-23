@@ -4,91 +4,47 @@
   <meta charset="UTF-8">
   <title>Yatzy</title>
 
+  <link rel="stylesheet" th:href="@{'/css/stilark.css'}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap" rel="stylesheet">
-
-  <style>
-      th, td {
-          border: 2px solid black;
-          padding: 5px;
-      }
-
-      input[type="checkbox"] {
-          appearance: none;
-      }
-
-      label {
-          user-select: none;
-          font-size: 10em;
-          font-family: 'Noto Sans Symbols 2', sans-serif;
-      }
-
-      input[type="checkbox"] + label {
-          color: black;
-      }
-
-      input[type="checkbox"]:checked + label {
-          color: red;
-      }
-
-      input[type="checkbox"] + label.ingenverdi {
-          color: grey;
-      }
-  </style>
 </head>
 <body>
 
 <h1><a th:href="@{'/'}">Yatzy</a></h1>
 
-<!--<p>Sidenummer: <span th:text="${sidenr}"></span></p>-->
-
-<div th:if="${spillerFerdig}">
+<div th:if="${side == 'ferdig'}">
   <p>Du har spilt ferdig.</p>
   <p>Du fikk <span th:text="${poeng.totalt}"></span> poeng.</p>
 </div>
 
-<!--<div th:if="${sidenr} ne 4">-->
-<div>
-  <form th:method="(${kastnr} == 3)? 'get' : 'post'"
-        th:action="@{/spill/{spillId}/spillsomdeltaker/{brukerId}(spillId=${spillId},brukerId=${brukerId})}">
-
-    <!--<button type="submit" th:if="${kastnr} ne 3">Trill terninger</button>-->
+<div th:if="${side != 'ferdig'}">
+  <form th:method="${side == 'kast3'}? 'get' : 'post'"
+        th:action="@{/spill/{spillId}/spillsomdeltaker/{brukerId}(spillId=${spillId},brukerId=${brukerId})}"
+        id="terningform">
 
     <fieldset th:if="${terninger}">
       <legend>Terninger<span th:if="${kastnr} == 1 or ${kastnr} == 2"> (klikk på terningene du vil beholde)</span></legend>
       <input type="checkbox" id="cb1" name="behold" value="t1" th:disabled="not (${kastnr} == 1 or ${kastnr} == 2)" th:checked="${checked} and ${#sets.contains(checked, 't1')}"/>
-      <label for="cb1" th:text="${terninger.t1}" th:class="(${sidenr} == 1)? 'ingenverdi'">Terning 1</label>
+      <label for="cb1" th:text="${terninger.t1}" th:class="${side == 'nyttkast'}? 'ingenverdi'">Terning 1</label>
       <input type="checkbox" id="cb2" name="behold" value="t2" th:disabled="not (${kastnr} == 1 or ${kastnr} == 2)" th:checked="${checked} and ${#sets.contains(checked, 't2')}"/>
-      <label for="cb2" th:text="${terninger.t2}" th:class="(${sidenr} == 1)? 'ingenverdi'">Terning 2</label>
+      <label for="cb2" th:text="${terninger.t2}" th:class="${side == 'nyttkast'}? 'ingenverdi'">Terning 2</label>
       <input type="checkbox" id="cb3" name="behold" value="t3" th:disabled="not (${kastnr} == 1 or ${kastnr} == 2)" th:checked="${checked} and ${#sets.contains(checked, 't3')}"/>
-      <label for="cb3" th:text="${terninger.t3}" th:class="(${sidenr} == 1)? 'ingenverdi'">Terning 3</label>
+      <label for="cb3" th:text="${terninger.t3}" th:class="${side == 'nyttkast'}? 'ingenverdi'">Terning 3</label>
       <input type="checkbox" id="cb4" name="behold" value="t4" th:disabled="not (${kastnr} == 1 or ${kastnr} == 2)" th:checked="${checked} and ${#sets.contains(checked, 't4')}"/>
-      <label for="cb4" th:text="${terninger.t4}" th:class="(${sidenr} == 1)? 'ingenverdi'">Terning 4</label>
+      <label for="cb4" th:text="${terninger.t4}" th:class="${side == 'nyttkast'}? 'ingenverdi'">Terning 4</label>
       <input type="checkbox" id="cb5" name="behold" value="t5" th:disabled="not (${kastnr} == 1 or ${kastnr} == 2)" th:checked="${checked} and ${#sets.contains(checked, 't5')}"/>
-      <label for="cb5" th:text="${terninger.t5}" th:class="(${sidenr} == 1)? 'ingenverdi'">Terning 5</label>
+      <label for="cb5" th:text="${terninger.t5}" th:class="${side == 'nyttkast'}? 'ingenverdi'">Terning 5</label>
     </fieldset>
 
-    <button type="submit" th:if="not ${spillerFerdig}" th:text="(${kastnr} == 3)? 'OK' : 'Trill terninger'"></button>
-    <p th:if="${kastnr}">Kast nummer <span th:text="${kastnr}"></span> av 3</p>
+    <button type="submit" th:text="${side == 'kast3'}? 'OK' : 'Trill terninger'"></button>
   </form>
 </div>
 
-<!--
-<div th:if="${sidenr} == 4">
-  <h2>Resultat</h2>
-  <p th:text="${resultat}"></p>
+<p th:if="${kastnr}">Kast nummer <span th:text="${kastnr}"></span> av 3</p>
+<p th:if="${side != 'ferdig'}">Kombinasjonstype: <span th:text="${kombinasjonstype}"></span></p>
 
-  <form method="post"
-        th:action="@{/spill/{spillId}/spillsomdeltaker/{brukerId}(spillId=${spillId},brukerId=${brukerId})}">
-    <button type="submit">OK</button>
-  </form>
-</div>
--->
-
-<p th:if="${kombinasjonstype} and not ${spillerFerdig}">Kombinasjonstype: <span th:text="${kombinasjonstype}"></span></p>
-
-<div th:if="${sidenr} == 4">
+<div th:if="${side == 'kast3'}">
   <h2>Resultat: <span th:text="${resultat}"></span></h2>
 </div>
 

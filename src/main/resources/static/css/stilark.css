@@ -1,0 +1,26 @@
+th, td {
+    border: 2px solid black;
+    padding: 5px;
+}
+
+#terningform input[type="checkbox"] {
+    appearance: none;
+}
+
+#terningform label {
+    user-select: none;
+    font-size: 10em;
+    font-family: 'Noto Sans Symbols 2', sans-serif;
+}
+
+#terningform input[type="checkbox"] + label {
+    color: black;
+}
+
+#terningform input[type="checkbox"]:checked + label {
+    color: red;
+}
+
+#terningform input[type="checkbox"] + label.ingenverdi {
+    color: grey;
+}
