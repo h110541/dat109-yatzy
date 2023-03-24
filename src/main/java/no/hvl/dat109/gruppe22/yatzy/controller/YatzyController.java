@@ -129,6 +129,11 @@ public class YatzyController {
         Runderesultat aktivKombinasjon = runderesultatService.finnAktiv(spill, bruker).orElse(null);
         Map<Integer, Runderesultat> resultater = runderesultatService.resultaterSpillBruker(spill, bruker);
 
+        List<Bruker> deltakere = brukerRepo.findBySpillOrderById(spill);
+        List<Map<String, Integer>> poengMapListe = spillService.genererPoengMapListe(spill, deltakere);
+        model.addAttribute("deltakere", deltakere);
+        model.addAttribute("pliste", poengMapListe);
+
         Integer forrigeKombinasjonstype = runderesultatService.forrigeKombinasjonstype(spill, bruker);
         int kombinasjonstype = (forrigeKombinasjonstype == null) ? 1 : forrigeKombinasjonstype + 1;
 
@@ -143,7 +148,9 @@ public class YatzyController {
             model.addAttribute("terninger", TerningUtil.terningVerdierTilSymboler(rr.hentTerningverdier()));
             model.addAttribute("side", "kast3");
         } else if (resultater.size() == Kombinasjonstyper.ANTALL_KOMBINASJONSTYPER) {
+            int brukerIndex = deltakere.indexOf(bruker);
             model.addAttribute("side", "ferdig");
+            model.addAttribute("brukerPoengTotalt", poengMapListe.get(brukerIndex).get("totalt"));
         } else if (aktivKombinasjon == null) {
             model.addAttribute("terninger", TerningUtil.terningVerdierTilSymboler(TerningUtil.KUN_ENERE));
             model.addAttribute("side", "nyttkast");
@@ -155,7 +162,6 @@ public class YatzyController {
         }
 
         model.addAttribute("kombinasjonstype", Kombinasjonstyper.NAVN_UI.get(kombinasjonstype));
-        model.addAttribute("poeng", Poengberegning.genererPoengMap(resultater, Kombinasjonstyper.NAVN));
         model.addAttribute("spillId", spillId);
         model.addAttribute("brukerId", brukerId);
 

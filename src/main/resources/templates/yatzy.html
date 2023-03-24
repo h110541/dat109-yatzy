@@ -15,7 +15,7 @@
 
 <div th:if="${side == 'ferdig'}">
   <p>Du har spilt ferdig.</p>
-  <p>Du fikk <span th:text="${poeng.totalt}"></span> poeng.</p>
+  <p>Du fikk <span th:text="${brukerPoengTotalt}"></span> poeng.</p>
 </div>
 
 <div th:if="${side != 'ferdig'}">
@@ -52,24 +52,25 @@
 
 <div>
   <table>
-    <tr><td>Enere</td><td th:text="${#maps.containsKey(poeng, 'enere')}? ${poeng.enere} : ''"></td></tr>
-    <tr><td>Toere</td><td th:text="${#maps.containsKey(poeng, 'toere')}? ${poeng.toere} : ''"></td></tr>
-    <tr><td>Treere</td><td th:text="${#maps.containsKey(poeng, 'treere')}? ${poeng.treere} : ''"></td></tr>
-    <tr><td>Firere</td><td th:text="${#maps.containsKey(poeng, 'firere')}? ${poeng.firere} : ''"></td></tr>
-    <tr><td>Femmere</td><td th:text="${#maps.containsKey(poeng, 'femmere')}? ${poeng.femmere} : ''"></td></tr>
-    <tr><td>Seksere</td><td th:text="${#maps.containsKey(poeng, 'seksere')}? ${poeng.seksere} : ''"></td></tr>
-    <tr><td><b>Sum</b></td><td th:text="${#maps.containsKey(poeng, 'sumEnereTilSeksere')}? ${poeng.sumEnereTilSeksere} : ''"></td></tr>
-    <tr><td><b>Bonus</b></td><td th:text="${#maps.containsKey(poeng, 'bonus')}? ${poeng.bonus} : ''"></td></tr>
-    <tr><td>Ett par</td><td th:text="${#maps.containsKey(poeng, 'ettpar')}? ${poeng.ettpar} : ''"></td></tr>
-    <tr><td>To par</td><td th:text="${#maps.containsKey(poeng, 'topar')}? ${poeng.topar} : ''"></td></tr>
-    <tr><td>Tre like</td><td th:text="${#maps.containsKey(poeng, 'trelike')}? ${poeng.trelike} : ''"></td></tr>
-    <tr><td>Fire like</td><td th:text="${#maps.containsKey(poeng, 'firelike')}? ${poeng.firelike} : ''"></td></tr>
-    <tr><td>Liten straight</td><td th:text="${#maps.containsKey(poeng, 'litenstraight')}? ${poeng.litenstraight} : ''"></td></tr>
-    <tr><td>Stor straight</td><td th:text="${#maps.containsKey(poeng, 'storstraight')}? ${poeng.storstraight} : ''"></td></tr>
-    <tr><td>Hus</td><td th:text="${#maps.containsKey(poeng, 'hus')}? ${poeng.hus} : ''"></td></tr>
-    <tr><td>Sjanse</td><td th:text="${#maps.containsKey(poeng, 'sjanse')}? ${poeng.sjanse} : ''"></td></tr>
-    <tr><td>Yatzy</td><td th:text="${#maps.containsKey(poeng, 'yatzy')}? ${poeng.yatzy} : ''"></td></tr>
-    <tr><td><b>Totalt</b></td><td th:text="${#maps.containsKey(poeng, 'totalt')}? ${poeng.totalt} : ''"></td></tr>
+    <tr><th></th><th th:each="d : ${deltakere}" th:text="${d.brukernavn}"></th></tr>
+    <tr><td>Enere</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'enere')}? ${poeng.enere} : ''"></td></tr>
+    <tr><td>Toere</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'toere')}? ${poeng.toere} : ''"></td></tr>
+    <tr><td>Treere</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'treere')}? ${poeng.treere} : ''"></td></tr>
+    <tr><td>Firere</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'firere')}? ${poeng.firere} : ''"></td></tr>
+    <tr><td>Femmere</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'femmere')}? ${poeng.femmere} : ''"></td></tr>
+    <tr><td>Seksere</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'seksere')}? ${poeng.seksere} : ''"></td></tr>
+    <tr><td><b>Sum</b></td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'sumEnereTilSeksere')}? ${poeng.sumEnereTilSeksere} : ''"></td></tr>
+    <tr><td><b>Bonus</b></td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'bonus')}? ${poeng.bonus} : ''"></td></tr>
+    <tr><td>Ett par</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'ettpar')}? ${poeng.ettpar} : ''"></td></tr>
+    <tr><td>To par</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'topar')}? ${poeng.topar} : ''"></td></tr>
+    <tr><td>Tre like</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'trelike')}? ${poeng.trelike} : ''"></td></tr>
+    <tr><td>Fire like</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'firelike')}? ${poeng.firelike} : ''"></td></tr>
+    <tr><td>Liten straight</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'litenstraight')}? ${poeng.litenstraight} : ''"></td></tr>
+    <tr><td>Stor straight</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'storstraight')}? ${poeng.storstraight} : ''"></td></tr>
+    <tr><td>Hus</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'hus')}? ${poeng.hus} : ''"></td></tr>
+    <tr><td>Sjanse</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'sjanse')}? ${poeng.sjanse} : ''"></td></tr>
+    <tr><td>Yatzy</td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'yatzy')}? ${poeng.yatzy} : ''"></td></tr>
+    <tr><td><b>Totalt</b></td><td th:each="poeng : ${pliste}" th:text="${#maps.containsKey(poeng, 'totalt')}? ${poeng.totalt} : ''"></td></tr>
   </table>
 </div>
 

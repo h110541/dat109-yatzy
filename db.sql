@@ -34,10 +34,11 @@ CREATE TABLE runderesultat (
 
 INSERT INTO bruker (brukernavn)
 VALUES
-    ('Ole Olsen'),
-    ('Hanne Olsen'),
-    ('Silje Olsen'),
-    ('Øystein Hansen'),
-    ('Lene Hansen'),
-    ('Ole Hansen'),
-    ('Stine Hansen');
+    ('Ole'),
+    ('Hanne'),
+    ('Silje'),
+    ('Øystein'),
+    ('Lene'),
+    ('Morten'),
+    ('Anders'),
+    ('Stine');

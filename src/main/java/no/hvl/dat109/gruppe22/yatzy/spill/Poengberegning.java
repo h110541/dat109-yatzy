@@ -227,7 +227,7 @@ public class Poengberegning {
     public static Map<String, Integer> genererPoengMap(
             Map<Integer, Runderesultat> resultater, Map<Integer, String> kombinasjonstyperNavn) {
 
-        Map<String, Integer> poengMap = new HashMap<>();
+        Map<String, Integer> poengMap = new HashMap<>(28);
         resultater.forEach((k, rr) -> poengMap.put(kombinasjonstyperNavn.get(k), beregnRunde(rr)));
 
         int totalUtenBonus = poengMap.values().stream().mapToInt(Integer::intValue).sum();
