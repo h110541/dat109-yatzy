@@ -12,6 +12,7 @@
 <body>
 
 <h1><a th:href="@{'/'}">Yatzy</a></h1>
+<p>Logget inn som <span th:text="${#authentication.getPrincipal().getUsername()}"></span> (<a th:href="@{'/logout'}">logg ut</a>)</p>
 
 <div th:if="${side == 'ferdig'}">
   <p>Du har spilt ferdig.</p>
@@ -20,7 +21,7 @@
 
 <div th:if="${side != 'ferdig'}">
   <form th:method="${side == 'kast3'}? 'get' : 'post'"
-        th:action="@{/spill/{spillId}/spillsomdeltaker/{brukerId}(spillId=${spillId},brukerId=${brukerId})}"
+        th:action="@{/spill/spill/{spillId}(spillId=${spillId})}"
         id="terningform">
 
     <fieldset th:if="${terninger}">

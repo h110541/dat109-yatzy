@@ -13,6 +13,7 @@ public class Spill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Boolean startet;
+    private Boolean avsluttet;
 
     @ManyToMany
     @JoinTable(
@@ -22,6 +23,30 @@ public class Spill {
             inverseJoinColumns = @JoinColumn(name = "bruker_id")
     )
     private Set<Bruker> deltakere;
+
+    @ManyToOne
+    @JoinColumn(name = "opprettet_av")
+    private Bruker opprettetAv;
+
+    public Spill() {}
+
+    public Spill(Bruker opprettetAv) {
+        this.opprettetAv = opprettetAv;
+        startet = false;
+        avsluttet = false;
+
+        leggTilDeltaker(opprettetAv);
+    }
+
+    public String status() {
+        if (avsluttet) {
+            return "avsluttet";
+        } else if (startet) {
+            return "pågående";
+        }
+
+        return "ikke startet";
+    }
 
     public Set<Bruker> getDeltakere() {
         return deltakere;
@@ -45,6 +70,22 @@ public class Spill {
 
     public void setStartet(Boolean startet) {
         this.startet = startet;
+    }
+
+    public Boolean getAvsluttet() {
+        return avsluttet;
+    }
+
+    public void setAvsluttet(Boolean avsluttet) {
+        this.avsluttet = avsluttet;
+    }
+
+    public Bruker getOpprettetAv() {
+        return opprettetAv;
+    }
+
+    public void setOpprettetAv(Bruker opprettetAv) {
+        this.opprettetAv = opprettetAv;
     }
 
     @Override

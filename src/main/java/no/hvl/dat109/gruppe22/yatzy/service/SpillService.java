@@ -23,6 +23,11 @@ public class SpillService {
     public void leggTilDeltaker(Spill spill, Bruker deltaker) {
         if (spill != null && deltaker != null && !spill.getStartet() && (spill.getDeltakere().size() < 6)) {
             spill.leggTilDeltaker(deltaker);
+
+            if (spill.getDeltakere().size() == 6) {
+                spill.setStartet(true);
+            }
+
             spillRepo.save(spill);
         }
     }
@@ -44,5 +49,13 @@ public class SpillService {
         }
 
         return poengMapListe;
+    }
+
+    public List<Spill> finnSpillMedLedigePlasser(Bruker bruker) {
+        List<Spill> ikkeStartet = spillRepo.findByStartet(false);
+
+        return ikkeStartet.stream()
+                .filter(s -> !s.getDeltakere().contains(bruker))
+                .toList();
     }
 }

@@ -13,7 +13,9 @@ CREATE TABLE bruker (
 
 CREATE TABLE spill (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    startet boolean NOT NULL
+    startet boolean NOT NULL,
+    avsluttet boolean NOT NULL,
+    opprettet_av bigint NOT NULL REFERENCES bruker(id)
 );
 
 CREATE TABLE bruker_spill (

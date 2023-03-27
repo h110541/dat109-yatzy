@@ -14,6 +14,8 @@ import no.hvl.dat109.gruppe22.yatzy.spill.Poengberegning;
 import no.hvl.dat109.gruppe22.yatzy.spill.TerningUtil;
 import no.hvl.dat109.gruppe22.yatzy.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.security.Principal;
+import java.util.*;
 
 @Controller
 public class YatzyController {
@@ -49,78 +50,119 @@ public class YatzyController {
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("brukere", brukerRepo.alleSortertPaId());
-        model.addAttribute("spill", spillRepo.alleSortertPaId());
-        return "home";
-    }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean loggetInn = (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
 
-    @PostMapping("/nybruker")
-    public String nyBruker(@RequestParam String brukernavn) {
-        if (!brukernavn.isBlank()) {
-            Bruker bruker = new Bruker();
-            bruker.setBrukernavn(brukernavn.strip());
-            brukerRepo.save(bruker);
+        if (loggetInn) {
+            return "meny";
         }
 
-        return "redirect:/";
+        return "homeikkeloggetinn";
     }
 
-    @PostMapping("/nyttspill")
-    public String nyttSpill() {
-        Spill spill = new Spill();
-        spill.setStartet(false);
-        spillRepo.save(spill);
-        return "redirect:/";
+    @PostMapping("/spill/opprettnyttspill")
+    public String nyttSpill(Principal principal) {
+        Bruker bruker = brukerRepo.findByBrukernavn(principal.getName()).orElse(null);
+
+        Spill spill = new Spill(bruker);
+        spill = spillRepo.save(spill);
+
+        return "redirect:/spill/vis/" + spill.getId();
     }
 
-    @GetMapping("/spill/{id}")
-    public String administrerSpill(@PathVariable Long id, Model model) {
+    @GetMapping("/spill/mine")
+    public String visMineSpill(Principal principal, Model model) {
+        Bruker bruker = brukerRepo.findByBrukernavn(principal.getName()).orElse(null);
+        List<Spill> spill = spillRepo.findByDeltakereAndAvsluttetFalseOrderById(bruker);
+        List<Map<String, String>> spillinfo = new ArrayList<>(spill.size());
+
+        for (Spill s : spill) {
+            spillinfo.add(
+                    Map.of(
+                            "id", s.getId().toString(),
+                            "status", s.status(),
+                            "opprettetAv", s.getOpprettetAv().getBrukernavn()
+                    )
+            );
+        }
+
+        model.addAttribute("spill", spillinfo);
+        return "spilloversikt";
+    }
+
+    @GetMapping("/spill/ledige")
+    public String visLedigeSpill(Principal principal, Model model) {
+        Bruker bruker = brukerRepo.findByBrukernavn(principal.getName()).orElse(null);
+        List<Spill> spill = spillService.finnSpillMedLedigePlasser(bruker);
+        List<Map<String, String>> spillinfo = new ArrayList<>(spill.size());
+
+        for (Spill s : spill) {
+            spillinfo.add(
+                    Map.of(
+                            "id", s.getId().toString(),
+                            "status", s.status(),
+                            "opprettetAv", s.getOpprettetAv().getBrukernavn()
+                    )
+            );
+        }
+
+        model.addAttribute("spill", spillinfo);
+        return "spilloversikt";
+    }
+
+    @GetMapping("/spill/vis/{id}")
+    public String visSpill(@PathVariable Long id, Principal principal, Model model) {
         Spill spill = spillRepo.findById(id).orElse(null);
+        Bruker bruker = brukerRepo.findByBrukernavn(principal.getName()).orElse(null);
 
         if (spill == null) {
             return "redirect:/feil";
         }
 
-        Set<Bruker> deltakere = spill.getDeltakere();
-        List<Bruker> andreBrukere = brukerService.finnBrukereIkkePameldtSpill(spill);
+        if (!spill.getStartet() && !spill.getDeltakere().contains(bruker)) {
+            model.addAttribute("visMeldpaa", true);
+        } else if (!spill.getStartet() && spill.getOpprettetAv().equals(bruker)) {
+            model.addAttribute("visStart", true);
+        } else if (spill.getStartet() && spill.getDeltakere().contains(bruker)) {
+            model.addAttribute("visSpillnaa", true);
+        }
 
         model.addAttribute("spill", spill);
-        model.addAttribute("deltakere", deltakere);
-        model.addAttribute("andreBrukere", andreBrukere);
-        return "administrerspill";
+        return "visspill";
     }
 
-    @GetMapping("/spill/{spillId}/leggtildeltaker/{brukerId}")
-    public String leggTilDeltaker(@PathVariable Long spillId, @PathVariable Long brukerId) {
+    @PostMapping("/spill/meldpaa/{spillId}")
+    public String meldPaa(@PathVariable Long spillId, Principal principal) {
         Spill spill = spillRepo.findById(spillId).orElse(null);
-        Bruker deltaker = brukerRepo.findById(brukerId).orElse(null);
+        Bruker bruker = brukerRepo.findByBrukernavn(principal.getName()).orElse(null);
 
-        spillService.leggTilDeltaker(spill, deltaker);
-        return "redirect:/spill/{spillId}";
+        spillService.leggTilDeltaker(spill, bruker);
+        return "redirect:/spill/vis/{spillId}";
     }
 
-    @GetMapping("/spill/{spillId}/start")
-    public String startSpill(@PathVariable Long spillId) {
+    @PostMapping("/spill/start/{spillId}")
+    public String startSpill(@PathVariable Long spillId, Principal principal) {
         Spill spill = spillRepo.findById(spillId).orElse(null);
+        Bruker bruker = brukerRepo.findByBrukernavn(principal.getName()).orElse(null);
 
-        if ((spill == null) || spill.getDeltakere().isEmpty()) {
+        if ((spill == null) || spill.getDeltakere().isEmpty() || !spill.getOpprettetAv().equals(bruker)) {
             return "redirect:/feil";
         }
 
         spill.setStartet(true);
         spillRepo.save(spill);
-        return "redirect:/spill/{spillId}";
+        return "redirect:/spill/vis/{spillId}";
     }
 
-    @GetMapping("/spill/{spillId}/spillsomdeltaker/{brukerId}")
-    public String spillYatzy(@PathVariable Long spillId, @PathVariable Long brukerId, Model model, RedirectAttributes ra,
+    @GetMapping("/spill/spill/{spillId}")
+    public String spillYatzy(@PathVariable Long spillId, Principal principal, Model model, RedirectAttributes ra,
                              @RequestParam(required = false) Set<String> checked,
                              @RequestParam(required = false) Long bekreftresultatid) {
 
         Spill spill = spillRepo.findById(spillId).orElse(null);
-        Bruker bruker = brukerRepo.findById(brukerId).orElse(null);
+        Bruker bruker = brukerRepo.findByBrukernavn(principal.getName()).orElse(null);
 
-        String feilmelding = Util.sjekkGyldigSpillOgBruker(spill, spillId, bruker, brukerId);
+        String feilmelding = Util.sjekkGyldigSpillOgBruker(spill, spillId, bruker);
         if (feilmelding != null) {
             ra.addFlashAttribute("feilmelding", feilmelding);
             return "redirect:/feil";
@@ -163,7 +205,7 @@ public class YatzyController {
 
         model.addAttribute("kombinasjonstype", Kombinasjonstyper.NAVN_UI.get(kombinasjonstype));
         model.addAttribute("spillId", spillId);
-        model.addAttribute("brukerId", brukerId);
+        model.addAttribute("brukerId", bruker.getId());
 
         if (checked != null) {
             model.addAttribute("checked", checked);
@@ -172,14 +214,14 @@ public class YatzyController {
         return "yatzy";
     }
 
-    @PostMapping ("/spill/{spillId}/spillsomdeltaker/{brukerId}")
-    public String spillYatzyPost(@PathVariable Long spillId, @PathVariable Long brukerId, Model model, RedirectAttributes ra,
+    @PostMapping ("/spill/spill/{spillId}")
+    public String spillYatzyPost(@PathVariable Long spillId, Principal principal, Model model, RedirectAttributes ra,
                                  @RequestParam(required = false) Set<String> behold) {
 
         Spill spill = spillRepo.findById(spillId).orElse(null);
-        Bruker bruker = brukerRepo.findById(brukerId).orElse(null);
+        Bruker bruker = brukerRepo.findByBrukernavn(principal.getName()).orElse(null);
 
-        String feilmelding = Util.sjekkGyldigSpillOgBruker(spill, spillId, bruker, brukerId);
+        String feilmelding = Util.sjekkGyldigSpillOgBruker(spill, spillId, bruker);
         if (feilmelding != null) {
             ra.addFlashAttribute("feilmelding", feilmelding);
             return "redirect:/feil";
@@ -226,7 +268,7 @@ public class YatzyController {
             ra.addAttribute("checked", behold);
         }
 
-        return "redirect:/spill/{spillId}/spillsomdeltaker/{brukerId}";
+        return "redirect:/spill/spill/{spillId}";
     }
 
     @GetMapping("/feil")

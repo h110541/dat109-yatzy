@@ -12,18 +12,15 @@ public class Util {
      * @param spill    det aktuelle spillet
      * @param spillId  spillet sin id
      * @param bruker   den aktuelle brukeren
-     * @param brukerId brukeren sin id
      * @return         null hvis alt er OK, ellers en feilmelding
      */
-    public static String sjekkGyldigSpillOgBruker(Spill spill, long spillId, Bruker bruker, long brukerId) {
+    public static String sjekkGyldigSpillOgBruker(Spill spill, long spillId, Bruker bruker) {
         String feilmelding = null;
 
         if (spill == null) {
             feilmelding = String.format("Fant ikke spill med ID %d", spillId);
-        } else if (bruker == null) {
-            feilmelding = String.format("Fant ikke bruker med ID %d", brukerId);
         } else if (!spill.getDeltakere().contains(bruker)) {
-            feilmelding = String.format("Bruker med ID %d er ikke påmeldt spill med ID %d", brukerId, spillId);
+            feilmelding = String.format("Bruker med ID %d er ikke påmeldt spill med ID %d", bruker.getId(), spillId);
         } else if (!spill.getStartet()) {
             feilmelding = String.format("Spill med id %d har ikke startet ennå", spillId);
         }

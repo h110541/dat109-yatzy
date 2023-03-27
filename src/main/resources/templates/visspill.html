@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Yatzy</title>
+</head>
+<body>
+
+<h1><a th:href="@{'/'}">Yatzy</a></h1>
+<p>Logget inn som <span th:text="${#authentication.getPrincipal().getUsername()}"></span> (<a th:href="@{'/logout'}">logg ut</a>)</p>
+
+<h2>Spill-ID <span th:text="${spill.id}"></span></h2>
+
+<div>
+  <p>Status: <span th:text="${spill.status()}"></span></p>
+  <p>Opprettet av: <span th:text="${spill.opprettetAv.brukernavn}"></span></p>
+</div>
+
+<div>
+  <table>
+    <tr><th>Deltakere</th></tr>
+    <tr th:each="deltaker : ${spill.deltakere}"><td th:text="${deltaker.brukernavn}"></td></tr>
+  </table>
+</div>
+
+<div th:if="${visMeldpaa}">
+  <form method="post" th:action="@{/spill/meldpaa/{spillId}(spillId=${spill.id})}">
+    <button>Meld på</button>
+  </form>
+</div>
+
+<div th:if="${visStart}">
+  <form method="post" th:action="@{/spill/start/{spillId}(spillId=${spill.id})}">
+    <button>Start spill</button>
+  </form>
+</div>
+
+<div th:if="${visSpillnaa}">
+  <h3><a th:href="@{/spill/spill/{spillId}(spillId=${spill.id})}">Spill nå</a></h3>
+</div>
+
+</body>
+</html>

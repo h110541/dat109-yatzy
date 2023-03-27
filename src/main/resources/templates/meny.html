@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Yatzy</title>
+</head>
+<body>
+
+<h1><a th:href="@{'/'}">Yatzy</a></h1>
+<p>Logget inn som <span th:text="${#authentication.getPrincipal().getUsername()}"></span> (<a th:href="@{'/logout'}">logg ut</a>)</p>
+
+<div>
+  <form method="post" th:action="@{'/spill/opprettnyttspill'}">
+    <button>Opprett nytt spill</button>
+  </form>
+
+  <ul>
+    <li><a th:href="@{'/spill/mine'}">Mine spill</a></li>
+    <li><a th:href="@{'/spill/ledige'}">Spill med ledige plasser</a></li>
+    <!--<li><a th:href="@{'/spill/sok'}">Søk etter spill (på spill-ID)</a></li>
+    <li><a th:href="@{'/spill/avsluttet'}">Ferdigspilte spill</a></li>
+    <li><a th:href="@{'/admin/asdf'}">Administrer brukerkontoer</a></li>-->
+  </ul>
+</div>
+
+</body>
+</html>

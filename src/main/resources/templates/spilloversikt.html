@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Yatzy</title>
+</head>
+
+<body>
+
+<h1><a th:href="@{'/'}">Yatzy</a></h1>
+<p>Logget inn som <span th:text="${#authentication.getPrincipal().getUsername()}"></span> (<a th:href="@{'/logout'}">logg ut</a>)</p>
+
+<div>
+  <table>
+    <tr><th>Spill-ID</th><th>Status</th><th>Opprettet av</th></tr>
+
+    <tr th:each="s : ${spill}">
+      <td><a th:text="|${s.id} (vis spill)|" th:href="@{/spill/vis/{spillId}(spillId=${s.id})}"></a></td>
+      <td th:text="${s.status}"></td>
+      <td th:text="${s.opprettetAv}"></td>
+    </tr>
+  </table>
+</div>
+
+</body>
+</html>
