@@ -4,7 +4,11 @@ SET search_path TO yatzy;
 
 CREATE TABLE bruker (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    brukernavn text UNIQUE NOT NULL
+    brukernavn text UNIQUE NOT NULL CHECK(length(brukernavn) <= 20),
+    navn text NOT NULL CHECK(length(navn) <= 100),
+    epost text NOT NULL CHECK(length(epost) <= 100),
+    admin boolean NOT NULL,
+    pwhash text NOT NULL
 );
 
 CREATE TABLE spill (
@@ -32,13 +36,16 @@ CREATE TABLE runderesultat (
     UNIQUE (bruker_id, spill_id, kombinasjonstype)
 );
 
-INSERT INTO bruker (brukernavn)
+INSERT INTO bruker (brukernavn, navn, epost, admin, pwhash)
 VALUES
-    ('Ole'),
+    ('Ole', 'Ole Olsen', 'ole@mail.net', TRUE, '{bcrypt}$2a$10$/ocvKi3mpZtbZAq1tN7gHejyXIiyPaazaNACe011i7XalF1rhfvs2'), -- pw=pass1234
+    ('Hanne', 'Hanne Olsen', 'hanne@mail.net', FALSE, '{bcrypt}$2a$10$/ocvKi3mpZtbZAq1tN7gHejyXIiyPaazaNACe011i7XalF1rhfvs2');
+
+/*    ('Ole'),
     ('Hanne'),
     ('Silje'),
     ('Øystein'),
     ('Lene'),
     ('Morten'),
     ('Anders'),
-    ('Stine');
+    ('Stine');*/

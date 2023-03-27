@@ -14,9 +14,32 @@ public class Bruker {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String brukernavn;
+    private String navn;
+    private String epost;
+    private Boolean admin;
+    private String pwhash;
 
     @ManyToMany(mappedBy = "deltakere")
     private Set<Spill> spill;
+
+    public Bruker() {}
+
+    public Bruker(String brukernavn, String navn, String epost, String pwhash) {
+        this.brukernavn = brukernavn;
+        this.navn = navn;
+        this.epost = epost;
+        this.pwhash = pwhash;
+
+        admin = false;
+    }
+
+    public String[] roller() {
+        if (admin) {
+            return new String[] { "USER", "ADMIN" };
+        }
+
+        return new String[] { "USER" };
+    }
 
     public Set<Spill> getSpill() {
         return spill;
@@ -40,6 +63,38 @@ public class Bruker {
 
     public void setBrukernavn(String brukernavn) {
         this.brukernavn = brukernavn;
+    }
+
+    public String getNavn() {
+        return navn;
+    }
+
+    public void setNavn(String navn) {
+        this.navn = navn;
+    }
+
+    public String getEpost() {
+        return epost;
+    }
+
+    public void setEpost(String epost) {
+        this.epost = epost;
+    }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
+    public String getPwhash() {
+        return pwhash;
+    }
+
+    public void setPwhash(String pwhash) {
+        this.pwhash = pwhash;
     }
 
     @Override

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrer ny bruker</title>
+
+  <style>
+      .errormsg {
+          color: red;
+      }
+  </style>
+</head>
+<body>
+
+<h1>Registrer ny bruker</h1>
+
+<form th:object="${nyBrukerForm}" th:action="@{/registrerbruker}" method="post">
+  <p>Brukernavn <input type="text" th:field="*{brukernavn}" /></p>
+  <p th:if="${#fields.hasErrors('brukernavn')}" th:errors="*{brukernavn}" class="errormsg"></p>
+
+  <p>Navn <input type="text" th:field="*{navn}" /></p>
+  <p th:if="${#fields.hasErrors('navn')}" th:errors="*{navn}" class="errormsg"></p>
+
+  <p>E-post <input type="text" th:field="*{epost}" /></p>
+  <p th:if="${#fields.hasErrors('epost')}" th:errors="*{epost}" class="errormsg"></p>
+
+  <p>Passord <input type="password" th:field="*{passord}" /></p>
+  <p th:if="${#fields.hasErrors('passord')}" th:errors="*{passord}" class="errormsg"></p>
+
+  <p><button>Registrer bruker</button></p>
+</form>
+
+</body>
+</html>
